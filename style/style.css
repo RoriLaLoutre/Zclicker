@@ -4,6 +4,11 @@ body,html{
     font-family: Georgia, 'Times New Roman', Times, serif;
     height: 100%;
     margin: 0;
+    -webkit-user-drag: none; /* Chrome, Safari */
+    user-select: none; /* Empêche sélection sur texte */
+    -webkit-user-select: none; /* Pour Chrome/Safari */
+    -moz-user-select: none; /* Pour Firefox */
+    -ms-user-select: none; /* Pour IE/Edge */
 
 }
 
@@ -37,6 +42,10 @@ body,html{
 
     box-shadow: 0 0 50px 0 rgb(255, 255, 255);
     transition: box-shadow 0.5s ease;
+
+
+    position: relative; /* nécessaire pour que les spans absolus se placent dans la carte */
+
 }
 
 
@@ -103,4 +112,25 @@ infoCard{
 
     box-shadow: 0 0 20px 0 green;
     transition: box-shadow 0.5s ease;
+}
+
+
+.floating-damage {
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff5555;
+    pointer-events: none;
+    animation: floatUp 1s forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
 }

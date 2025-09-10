@@ -17,6 +17,7 @@ let player = {
     pseudo: "Rori",
     xp: 0,
     gold: 0,
+    killcount: 0,
     clickBuff:{
         sword: {
             number: 0,
@@ -85,8 +86,8 @@ function spawnZombie(){
 }
 
 function displayZombieInfo(maxhp , hp , img){
-    maxHP.textContent = maxhp
-    currentHP.textContent = hp
+    maxHP.textContent =  Math.floor(maxhp)
+    currentHP.textContent =  Math.floor(hp)
     imgZombie.src = img
 }
 
@@ -175,29 +176,45 @@ function play(){
 
     player = loadPlayer()
 
-    card.addEventListener("click" , function(){
-        zombieHP -= dealClickDamage(player)
+    card.addEventListener("click", function(e){
+        const dmg = dealClickDamage(player); // <-- calculer le damage
+        zombieHP -= dmg;
         displayZombieInfo(maxZombieHp, zombieHP , ZombieImg)
         updateHpBar(zombieHP,maxZombieHp)
-        console.log("clické")
     
-    })
+        // Floating damage
+        const floating = document.createElement('span');
+        floating.classList.add('floating-damage');
+        floating.textContent = dmg;
+    
+        floating.style.left = e.offsetX + "px";
+        floating.style.top = e.offsetY + "px";
+    
+        card.appendChild(floating);
+    
+        setTimeout(() => {
+            floating.remove();
+        }, 1000);
+    });
     displayPlayerInfo(player);
 
     setInterval(() => {
         if(!currentZombie){
             currentZombie = spawnZombie()
-            zombieHP = currentZombie.hp;
-            maxZombieHp = currentZombie.hp;
+            zombieHP = currentZombie.hp + Math.log(player.killcount + 1) * 2;
+            maxZombieHp = currentZombie.hp + Math.log(player.killcount + 1) * 2
             ZombieImg = currentZombie.imagePath;
             displayZombieInfo(maxZombieHp, zombieHP , ZombieImg)
             updateHpBar(zombieHP,maxZombieHp)
         }
         else {
             if(zombieHP <= 0){
+
                 player.gold += Math.floor(Math.random() * 4);
                 player.xp += Math.floor(Math.random() * 4);
                 displayPlayerInfo(player);
+                player.killcount += 1
+
                 savePlayer(player);
                 currentZombie = null
             }
@@ -209,10 +226,14 @@ function play(){
             displayZombieInfo(maxZombieHp, zombieHP, ZombieImg);
             updateHpBar(zombieHP,maxZombieHp)
             if (zombieHP <= 0) {
+
                 player.gold += Math.floor(Math.random() * 4);
                 player.xp += Math.floor(Math.random() * 4);
                 displayPlayerInfo(player);
+                player.killcount += 1
+
                 savePlayer(player);
+
                 currentZombie = null;
             }
         }
