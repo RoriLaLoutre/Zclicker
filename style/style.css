@@ -71,9 +71,29 @@ infoCard{
     transition: width 0.3s ease; /* animation fluide quand PV changent */
 }
 
+.hpWrapper{
+    margin-bottom: -10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border-radius: 5px;
+    width: 20%;
+}
+
 .hp{
-    background-color: rgba(0, 0, 0, 0.527);
-    padding: 2px;
-    border-radius: 10px;
+    font-weight: bold;
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.button{
+    display: flex;
+    margin:auto;
+    text-align: center;
+    justify-content: center;
+    width: 60%;
+    margin-top: 15%;
+    font-size: 1.5rem;
+    background-color: green;
+    border-radius: 15px;
+    padding: 5px;
 }

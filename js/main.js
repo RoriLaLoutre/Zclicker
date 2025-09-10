@@ -1,8 +1,21 @@
 // init
 
-let joueur = {
+let hpBar = document.getElementById("zombieHP");
+let imgZombie = document.querySelector(".imgCard")
+let card = document.querySelector(".zCard")
+
+let maxHP = document.querySelector(".maxhp")
+let currentHP = document.querySelector(".currenthp")
+
+const playerName = document.querySelector(".infoName")
+let playerExp = document.querySelector(".infoXP")
+let playerGold = document.querySelector(".infoGold")
+
+const saveButton = document.querySelector(".button")
+
+let player = {
     pseudo: "Rori",
-    XP: 0,
+    xp: 0,
     gold: 0,
     clickBuff:{
         sword: {
@@ -50,18 +63,160 @@ let joueur = {
 let zombieList = [
     {
         name:"Coureur",
-        imagePath:"../assets/zombie-1.png",
-        hp:"15"
+        imagePath:"./assets/zombie-3.png",
+        hp:15
     },
     {
         name:"Tank",
-        imagePath:"../assets/zombie-2.png",
-        hp:"20"
+        imagePath:"./assets/zombie-2.png",
+        hp:20
     },
     {
         name:"Faiblard",
-        imagePath:"../assets/zombie-3.png",
-        hp:"10"
+        imagePath:"./assets/zombie-1.png",
+        hp:10
     }
 ]
+ 
+function spawnZombie(){
+    const randomNumber = Math.floor(Math.random() * zombieList.length);
+    zombieToSpawn = zombieList[randomNumber];
+    return zombieToSpawn
+}
 
+function displayZombieInfo(maxhp , hp , img){
+    maxHP.textContent = maxhp
+    currentHP.textContent = hp
+    imgZombie.src = img
+}
+
+function updateHpBar(current, max) {
+    const safeCurrent = Math.max(0, Math.min(current, max));
+
+    const percent = (safeCurrent / max) * 100;
+    hpBar.style.width = percent + "%";
+
+    if (percent <= 30) {
+        hpBar.style.backgroundColor = "red";
+    } else if (percent <= 60) {
+        hpBar.style.backgroundColor = "orange";
+    } else {
+        hpBar.style.backgroundColor = "green";
+    }
+}
+
+function displayPlayerInfo(player){
+    playerName.textContent = player.pseudo;
+    playerExp.textContent = player.xp + "🧬";
+    playerGold.textContent = player.gold + "🪙"
+}
+
+
+
+function dealClickDamage(player){
+    return 1 + calculDamageClick(player)
+}
+
+function calculDamageClick(player){
+    let buffs = Object.values(player.clickBuff);
+    let damage = 0;
+    buffs.forEach(buff => {
+        damage += buff.dmg * buff.number;
+    });
+    return damage;
+}
+
+function dealPassiveDamage(player){
+    return calculPassiveDamage(player)
+}
+
+function calculPassiveDamage(player){
+    let buffs = Object.values(player.passiveBuff);
+    let damage = 0;
+    buffs.forEach(buff => {
+        damage += buff.dmg * buff.number;
+    });
+    return damage;
+}
+
+function savePlayer(player) {
+    localStorage.setItem("playerData", JSON.stringify(player));
+
+}
+
+saveButton.addEventListener("click" , function(){
+    savePlayer(player);
+    alert("Progression Sauvegardée")
+})
+
+function loadPlayer(){
+    const saved = localStorage.getItem("playerData")
+    if(saved){
+        return JSON.parse(saved);
+    }
+    else{
+        return player
+    }
+}
+
+
+
+
+
+let currentZombie = null
+let zombieHP = null
+let maxZombieHp = null
+let ZombieImg = null
+
+// logique jeu
+
+
+function play(){
+
+    player = loadPlayer()
+
+    card.addEventListener("click" , function(){
+        zombieHP -= dealClickDamage(player)
+        displayZombieInfo(maxZombieHp, zombieHP , ZombieImg)
+        updateHpBar(zombieHP,maxZombieHp)
+        console.log("clické")
+    
+    })
+    displayPlayerInfo(player);
+
+    setInterval(() => {
+        if(!currentZombie){
+            currentZombie = spawnZombie()
+            zombieHP = currentZombie.hp;
+            maxZombieHp = currentZombie.hp;
+            ZombieImg = currentZombie.imagePath;
+            displayZombieInfo(maxZombieHp, zombieHP , ZombieImg)
+            updateHpBar(zombieHP,maxZombieHp)
+        }
+        else {
+            if(zombieHP <= 0){
+                player.gold += Math.floor(Math.random() * 4);
+                player.xp += Math.floor(Math.random() * 4);
+                displayPlayerInfo(player);
+                savePlayer(player);
+                currentZombie = null
+            }
+        }
+    }, 50);
+    setInterval(() => {
+        if (currentZombie && zombieHP > 0) {
+            zombieHP -= dealPassiveDamage(player);
+            displayZombieInfo(maxZombieHp, zombieHP, ZombieImg);
+            updateHpBar(zombieHP,maxZombieHp)
+            if (zombieHP <= 0) {
+                player.gold += Math.floor(Math.random() * 4);
+                player.xp += Math.floor(Math.random() * 4);
+                displayPlayerInfo(player);
+                savePlayer(player);
+                currentZombie = null;
+            }
+        }
+    }, 1000);
+}
+
+play()
