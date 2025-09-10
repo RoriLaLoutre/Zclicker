@@ -1,0 +1,79 @@
+body,html{
+    background-color: rgb(26, 26, 26);
+    color: white;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    height: 100%;
+    margin: 0;
+
+}
+
+.game{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+}
+
+.gameW{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    width: 33%;
+    height: 30%;
+}
+
+.zCard{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 20vw;
+    height: 50vh;
+    border: 2px solid white;
+    background-image: url("../assets/bg.png");
+    background-position: center;
+    border-radius: 10px;
+}
+
+infoCard{
+    margin-top: 5%;
+    display: flex;
+    flex-direction: row;
+    background-color: rgba(0, 0, 0, 0.527);
+    justify-content: space-around;
+    width: 90%;
+    height: 10%;
+    border-radius: 10px;
+
+}
+
+.imgCard {
+    width: 70%;
+    height: 70%;
+    object-fit: contain; 
+}
+
+
+.progressbar-wrapper {
+    background-color: rgb(87, 87, 87);
+    border-radius: 15px;
+    width: 90%;
+    height: 20px;
+    margin-bottom: 5%;
+}
+
+.progressbar {
+    background-color: green;
+    height: 100%;
+    width: 100%;
+    border-radius: 15px;
+    transition: width 0.3s ease; /* animation fluide quand PV changent */
+}
+
+.hp{
+    background-color: rgba(0, 0, 0, 0.527);
+    padding: 2px;
+    border-radius: 10px;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
