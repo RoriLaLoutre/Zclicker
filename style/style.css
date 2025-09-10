@@ -34,7 +34,11 @@ body,html{
     background-image: url("../assets/bg.png");
     background-position: center;
     border-radius: 10px;
+
+    box-shadow: 0 0 50px 0 rgb(255, 255, 255);
+    transition: box-shadow 0.5s ease;
 }
+
 
 infoCard{
     margin-top: 5%;
@@ -96,4 +100,7 @@ infoCard{
     background-color: green;
     border-radius: 15px;
     padding: 5px;
+
+    box-shadow: 0 0 20px 0 green;
+    transition: box-shadow 0.5s ease;
 }
