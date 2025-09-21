@@ -4,11 +4,11 @@ body,html{
     font-family: Georgia, 'Times New Roman', Times, serif;
     height: 100%;
     margin: 0;
-    -webkit-user-drag: none; /* Chrome, Safari */
-    user-select: none; /* Empêche sélection sur texte */
-    -webkit-user-select: none; /* Pour Chrome/Safari */
-    -moz-user-select: none; /* Pour Firefox */
-    -ms-user-select: none; /* Pour IE/Edge */
+    -webkit-user-drag: none; 
+    user-select: none; 
+    -webkit-user-select: none; 
+    -moz-user-select: none; 
+    -ms-user-select: none; 
 
 }
 
@@ -44,7 +44,7 @@ body,html{
     transition: box-shadow 0.5s ease;
 
 
-    position: relative; /* nécessaire pour que les spans absolus se placent dans la carte */
+    position: relative;
 
 }
 
@@ -81,7 +81,7 @@ infoCard{
     height: 100%;
     width: 100%;
     border-radius: 15px;
-    transition: width 0.3s ease; /* animation fluide quand PV changent */
+    transition: width 0.3s ease; 
 }
 
 .hpWrapper{
@@ -133,4 +133,29 @@ infoCard{
         transform: translateY(-50px);
         opacity: 0;
     }
+}
+
+.buff{
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    align-items: center;
+}
+
+.buffcard{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    width: 250px;
+    min-height: 50px;
+    gap:10px;
+}
+
+.passive{
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    align-items: center;
 }

@@ -4,6 +4,9 @@ let hpBar = document.getElementById("zombieHP");
 let imgZombie = document.querySelector(".imgCard")
 let card = document.querySelector(".zCard")
 
+const buffList = document.querySelector(".buff")
+const passiveList = document.querySelector(".passive")
+
 let maxHP = document.querySelector(".maxhp")
 let currentHP = document.querySelector(".currenthp")
 
@@ -23,19 +26,22 @@ let player = {
             number: 0,
             description: "Une épée de meilleure qualité pour faire plus de dégats au click",
             dmg: 1,
-            baseCost: 10
+            baseCost: 10,
+            logo:"🗡️"
         },
         potion:{
             number: 0,
             description: "Une potion remplie d'une force mystérieuse",
             dmg: 3,
-            baseCost: 45
+            baseCost: 45,
+            logo:"⚗️"
         },
         crest:{
             number: 0,
             description: "Une croix invoquant un puissant pouvoir, redoutable contre les morts-vivants",
             dmg: 10,
-            baseCost: 150
+            baseCost: 150,
+            logo:"✝️"
         },
     },
     passiveBuff:{
@@ -43,19 +49,22 @@ let player = {
             number: 0,
             description: "Un effet de poison infligeant des dégats sur la durée",
             dmg: 1,
-            baseCost: 25
+            baseCost: 25,
+            logo:"☠️"
         },
         villager:{
             number: 0,
             description: "Un villageois vous aide à affronter les zombies",
             dmg: 3,
-            baseCost: 105
+            baseCost: 105,
+            logo:"👨‍🌾"
         },
         kindZombie:{
             number: 0,
             description: "Un gentil Zombie vous aide à affronter ses congénères",
             dmg: 8,
-            baseCost: 250
+            baseCost: 250,
+            logo:"🧟"
         },
     }
 }
@@ -78,6 +87,59 @@ let zombieList = [
         hp:10
     }
 ]
+
+
+
+function generateBuffAndPassiveCard(Currentplayer ,typeOfItem,Item){
+        let card = document.createElement("div");
+        card.classList.add("buffcard");
+        if(Item.baseCost <= Currentplayer.gold){
+            card.style.backgroundColor = "green";
+        }
+        else{
+            card.style.backgroundColor = "gray";
+
+        }
+
+        let cardLogo = document.createElement("div");
+        cardLogo.textContent = Item.logo;
+        let cardName = document.createElement("div");
+        cardName.textContent = Item.description;
+        let cardCost = document.createElement("div");
+        cardCost.textContent = Item.baseCost + "🪙";
+
+        card.appendChild(cardLogo);
+        card.appendChild(cardName);
+        card.appendChild(cardCost);
+
+          card.addEventListener("click", () => {
+        if(Currentplayer.gold >= Item.baseCost){
+
+            Currentplayer.gold -= Item.baseCost;
+            Item.number += 1;
+
+            displayPlayerInfo(Currentplayer);
+            generateAllBuffAndPassive(Currentplayer);
+            // Sauvegarder
+            savePlayer(Currentplayer);
+        }
+    });
+
+        typeOfItem.appendChild(card);
+}
+function generateAllBuffAndPassive(Currentplayer){
+    buffList.innerHTML = "<div class='buff gameW'>Liste des Buffs</div>"
+    passiveList.innerHTML =  "<div class='passive gameW'>Liste de Passifs</div>"
+
+    let buffs = Object.values(Currentplayer.clickBuff);
+    let passives = Object.values(Currentplayer.passiveBuff);
+    buffs.forEach(buff => {
+        generateBuffAndPassiveCard(Currentplayer, buffList , buff)
+    });
+    passives.forEach(passive => {
+        generateBuffAndPassiveCard(Currentplayer, passiveList , passive)
+    });
+}
  
 function spawnZombie(){
     const randomNumber = Math.floor(Math.random() * zombieList.length);
@@ -174,10 +236,10 @@ let ZombieImg = null
 
 function play(){
 
-    player = loadPlayer()
+    Currentplayer = loadPlayer()
 
     card.addEventListener("click", function(e){
-        const dmg = dealClickDamage(player); // <-- calculer le damage
+        const dmg = dealClickDamage(Currentplayer); 
         zombieHP -= dmg;
         displayZombieInfo(maxZombieHp, zombieHP , ZombieImg)
         updateHpBar(zombieHP,maxZombieHp)
@@ -196,13 +258,14 @@ function play(){
             floating.remove();
         }, 1000);
     });
-    displayPlayerInfo(player);
+    displayPlayerInfo(Currentplayer);
+    generateAllBuffAndPassive(Currentplayer);
 
     setInterval(() => {
         if(!currentZombie){
             currentZombie = spawnZombie()
-            zombieHP = currentZombie.hp + Math.log(player.killcount + 1) * 2;
-            maxZombieHp = currentZombie.hp + Math.log(player.killcount + 1) * 2
+            zombieHP = currentZombie.hp  + Math.pow(Currentplayer.killcount, 1.1);
+            maxZombieHp = currentZombie.hp  + Math.pow(Currentplayer.killcount, 1.1);
             ZombieImg = currentZombie.imagePath;
             displayZombieInfo(maxZombieHp, zombieHP , ZombieImg)
             updateHpBar(zombieHP,maxZombieHp)
@@ -210,34 +273,33 @@ function play(){
         else {
             if(zombieHP <= 0){
 
-                player.gold += Math.floor(Math.random() * 4);
-                player.xp += Math.floor(Math.random() * 4);
-                displayPlayerInfo(player);
-                player.killcount += 1
-
-                savePlayer(player);
+                Currentplayer.gold += 1 + Math.floor(Math.random() * 5);
+                Currentplayer.xp += 1 + Math.floor(Math.random() * 2);
+                displayPlayerInfo(Currentplayer);
+                generateAllBuffAndPassive(Currentplayer)
+                Currentplayer.killcount += 1
+                savePlayer(Currentplayer);
                 currentZombie = null
             }
         }
     }, 50);
     setInterval(() => {
         if (currentZombie && zombieHP > 0) {
-            zombieHP -= dealPassiveDamage(player);
+            zombieHP -= dealPassiveDamage(Currentplayer);
             displayZombieInfo(maxZombieHp, zombieHP, ZombieImg);
             updateHpBar(zombieHP,maxZombieHp)
             if (zombieHP <= 0) {
 
-                player.gold += Math.floor(Math.random() * 4);
-                player.xp += Math.floor(Math.random() * 4);
-                displayPlayerInfo(player);
-                player.killcount += 1
-
-                savePlayer(player);
-
+                Currentplayer.gold += 1 + Math.floor(Math.random() * 5);
+                Currentplayer.xp += 1 + Math.floor(Math.random() * 2);
+                displayPlayerInfo(Currentplayer);
+                generateAllBuffAndPassive(Currentplayer)
+                Currentplayer.killcount += 1
+                savePlayer(Currentplayer);
                 currentZombie = null;
             }
         }
-    }, 1000);
+    }, 500);
 }
 
 play()
